@@ -1,0 +1,1 @@
+D:\Code\Mine\SonarQube\samples\CSharp\.sonarqube\out\0

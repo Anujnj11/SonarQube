@@ -1,0 +1,13 @@
+{
+  "name": "sonarqube",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docker:up": "docker compose -f docker-compose.yml up -d --build",
+    "docker:stop": "docker compose -f docker-compose.yml stop"
+  },
+  "keywords": [],
+  "author": "Anuj Gupta",
+  "license": "ISC"
+}

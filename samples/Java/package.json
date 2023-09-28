@@ -1,0 +1,15 @@
+{
+  "name": "csharp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sonar:scanner": "dotnet sonarscanner begin /k:CSharp /d:sonar.host.url=http://localhost:9000  /d:sonar.token=sqp_932af1a9670d2426ff2deba83e2c24d266df3ea4",
+    "sonar:build": "dotnet build",
+    "sonar:scanner:end": "dotnet sonarscanner end /d:sonar.token=sqp_932af1a9670d2426ff2deba83e2c24d266df3ea4",
+    "sonar": "npm run sonar:scanner && npm run sonar:build && npm run sonar:scanner:end"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
