@@ -2,9 +2,20 @@ version: "3.4"
 
 services:
   sonarqube:
-    image: sonarqube:community
     depends_on:
       - postgresql-db
+    # image: mc1arke/sonarqube-with-community-branch-plugin:${SONARQUBE_VERSION}
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE}
+      args:
+        SONARQUBE_VERSION: ${SONARQUBE_VERSION}
+        PLUGIN_VERSION: ${PLUGIN_VERSION}
+    container_name: sonarqube
+    ports:
+      - 9000:9000
+    networks:
+      - sonarnet
     environment:
       SONAR_JDBC_URL: jdbc:postgresql://postgresql-db:5432/sonar
       SONAR_JDBC_USERNAME: ${POSTGRES_USER}
@@ -13,14 +24,28 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_logs:/opt/sonarqube/logs
-    ports:
-      - "9000:9000"
     restart: always
-    networks:
-      - sonarnet
+
+  #   sonarqube:
+  #     image: sonarqube:community
+  #     depends_on:
+  #       - postgresql-db
+  #     environment:
+  #       SONAR_JDBC_URL: jdbc:postgresql://postgresql-db:5432/sonar
+  #       SONAR_JDBC_USERNAME: ${POSTGRES_USER}
+  #       SONAR_JDBC_PASSWORD: ${POSTGRES_PASSWORD}
+  #     volumes:
+  #       - sonarqube_data:/opt/sonarqube/data
+  #       - sonarqube_extensions:/opt/sonarqube/extensions
+  #       - sonarqube_logs:/opt/sonarqube/logs
+  #     ports:
+  #       - "9000:9000"
+  #     restart: always
+  #     networks:
+  #       - sonarnet
 
   postgresql-db:
-    image: postgres:12
+    image: postgres:11
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -34,20 +59,20 @@ services:
       - sonarnet
 
   reverse_proxy:
-      container_name: reverse_proxy
-      depends_on:
-        - sonarqube
-      image: nginx
-      networks:
-        - sonarnet
-      ports:
-        - "80:80"
-        - "443:443"
-      restart: always
-      volumes:
-        - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-        - ${SSL_FULL_CHAIN_PEM}:/etc/ssl/certs/fullchain.pem
-        - ${SSL_PRV_KEY}:/etc/ssl/private/privkey.pem
+    container_name: reverse_proxy
+    depends_on:
+      - sonarqube
+    image: nginx
+    networks:
+      - sonarnet
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      # - ${SSL_FULL_CHAIN_PEM}:/etc/ssl/certs/fullchain.pem
+      # - ${SSL_PRV_KEY}:/etc/ssl/private/privkey.pem
 
 networks:
   sonarnet:
